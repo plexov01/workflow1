@@ -9,12 +9,14 @@ namespace WorkFlow1.Features.Bot
 	{
 		[SerializeField] protected string id = default;
 
-		[SerializeField] protected BotData botData = new BotData();
+		[SerializeField] protected BotController botController = default;
+
 
 		protected virtual void Awake()
 		{
-			botData.Initialize();
+			botController.Initialize(gameObject);
 		}
+
 
 		/// <summary>
 		/// Нанесение урона другому боту
