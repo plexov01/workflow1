@@ -30,7 +30,7 @@ namespace WorkFlow1.Features.Bot
 		/// <summary>
 		/// Урон бота
 		/// </summary>
-		public float Damage => _damage;
+		public int Damage => _damage;
 
 		/// <summary>
 		/// Инициализация данных бота

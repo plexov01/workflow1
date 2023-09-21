@@ -9,19 +9,13 @@ namespace WorkFlow1.Features.Bot
 	[Serializable]
 	public class IdleBehavior : AbstractBotBehavior
 	{
-		public override void EnterFollowBehavior()
+		public override void EnterBehavior()
 		{
 			Debug.Log("IdleBehavior EnterFollowBehavior");
 			//TODO: Реализовать действия при входе в поведение
 		}
 
-		public override void FollowBehavior()
-		{
-			Debug.Log("IdleBehavior FollowBehavior");
-			//TODO: Реализовать действия поведения
-		}
-
-		public override void ExitFollowBehavior()
+		public override void ExitBehavior()
 		{
 			Debug.Log("IdleBehavior ExitFollowBehavior");
 			//TODO: Реализовать действия при выходе из поведение

@@ -14,20 +14,17 @@ namespace WorkFlow1.Features.Bot
 
 		protected virtual void Awake()
 		{
-			botController.Initialize(gameObject);
+			if (botController == null)
+			{
+				botController = GetComponent<BotController>();
+			}
+
+			botController.Initialize();
 		}
 
-
 		/// <summary>
-		/// Нанесение урона другому боту
+		/// Применение урона к текущему бота
 		/// </summary>
-		/// <param name="bot"></param>
-		/// <param name="damage"></param>
-		public abstract void MakeDamage(AbstractBot bot, int damage);
-
-		/// <summary>
-		/// Нанесение урона себе
-		/// </summary>
-		public abstract void ApplyDamage();
+		public abstract void ApplyDamage(int damage);
 	}
 }

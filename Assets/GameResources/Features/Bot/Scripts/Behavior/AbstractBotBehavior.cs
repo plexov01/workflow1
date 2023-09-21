@@ -11,16 +11,11 @@ namespace WorkFlow1.Features.Bot
 		/// <summary>
 		/// Начать следовать поведению
 		/// </summary>
-		public abstract void EnterFollowBehavior();
-
-		/// <summary>
-		/// Следовать поведению соответствующему текущему состоянию бота
-		/// </summary>
-		public abstract void FollowBehavior();
+		public abstract void EnterBehavior();
 
 		/// <summary>
 		/// Перестать следовать поведению
 		/// </summary>
-		public abstract void ExitFollowBehavior();
+		public abstract void ExitBehavior();
 	}
 }

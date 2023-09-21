@@ -8,14 +8,10 @@ namespace WorkFlow1.Features.Bot
 	/// </summary>
 	public class StaticBot : AbstractBot
 	{
-		public override void MakeDamage(AbstractBot bot, int damage)
+		
+		public override void ApplyDamage(int damage)
 		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void ApplyDamage()
-		{
-			throw new System.NotImplementedException();
+			//TODO: Реализовать получение урона
 		}
 	}
 }

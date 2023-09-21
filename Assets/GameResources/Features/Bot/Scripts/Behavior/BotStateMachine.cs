@@ -7,7 +7,7 @@ namespace WorkFlow1.Features.Bot
 	/// Машина состояний для бота
 	/// </summary>
 	[Serializable]
-	public class BotStateMachine
+	public class BotStateMachine : MonoBehaviour
 	{
 		[SerializeReference] private AbstractBotBehavior _currentBotBehavior = default;
 
@@ -17,7 +17,7 @@ namespace WorkFlow1.Features.Bot
 		public void Initialize(AbstractBotBehavior _state)
 		{
 			_currentBotBehavior = _state;
-			_state.EnterFollowBehavior();
+			_state.EnterBehavior();
 		}
 
 		/// <summary>
@@ -26,11 +26,11 @@ namespace WorkFlow1.Features.Bot
 		/// <param name="_state"></param>
 		public void ChangeState(AbstractBotBehavior _state)
 		{
-			_currentBotBehavior.ExitFollowBehavior();
+			_currentBotBehavior.ExitBehavior();
 
 			_currentBotBehavior = _state;
 
-			_currentBotBehavior.EnterFollowBehavior();
+			_currentBotBehavior.EnterBehavior();
 		}
 	}
 }
