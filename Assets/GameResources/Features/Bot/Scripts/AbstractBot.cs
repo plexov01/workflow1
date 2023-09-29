@@ -7,7 +7,7 @@ namespace WorkFlow1.Features.Bot
 	/// </summary>
 	public abstract class AbstractBot : MonoBehaviour
 	{
-		[SerializeField] protected string id = default;
+		public int Id = default;
 
 		[SerializeField] protected BotController botController = default;
 
