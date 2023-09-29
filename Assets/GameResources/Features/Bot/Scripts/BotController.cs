@@ -22,7 +22,7 @@ namespace WorkFlow1.Features.Bot
 
 		[SerializeField] private BotPool _botPool = default;
 
-		[SerializeField] private List<AbstractBot> _listEnemies = default;
+		[SerializeField] private List<GameObject> _listEnemies = new List<GameObject>();
 
 		/// <summary>
 		/// Инициализация контроллера
@@ -30,8 +30,7 @@ namespace WorkFlow1.Features.Bot
 		public void Initialize()
 		{
 			_bot = gameObject;
-			_botData.Initialize();
-
+			
 			if (_navMeshAgent == null)
 			{
 				_navMeshAgent = _bot.GetComponent<NavMeshAgent>();
@@ -49,6 +48,12 @@ namespace WorkFlow1.Features.Bot
 				_botPool = FindObjectOfType<BotPool>();
 			}
 
+			int newId = _botPool.GetNewBotId();
+			gameObject.name += newId;
+			
+			_botData.Initialize(newId);
+
+
 			_navMeshAgent.speed = _botData.Speed;
 		}
 
@@ -58,13 +63,19 @@ namespace WorkFlow1.Features.Bot
 		/// <returns></returns>
 		public GameObject StartChaseRandomBot()
 		{
-			_listEnemies = _botPool.GetListBots();
+			_listEnemies = new List<GameObject>(_botPool.GetListActiveBots());
 
 			//Удаление текущего бота из списка возможных целей
-			_listEnemies.Remove(_bot.GetComponent<AbstractBot>());
-
+			_listEnemies.Remove(_bot);
+			
+			if (_listEnemies.Count==0)
+			{
+				_botStateMachine.ChangeState(new IdleBehavior());
+				return null;
+			}
+			
 			GameObject attackedBot = _listEnemies[UnityEngine.Random.Range(0, _listEnemies.Count)].gameObject;
-			_navMeshAgent.SetDestination(attackedBot.transform.position);
+			// _navMeshAgent.SetDestination(attackedBot.transform.position);
 
 			_botStateMachine.ChangeState(new MoveBehavior(_navMeshAgent, attackedBot));
 
@@ -75,17 +86,30 @@ namespace WorkFlow1.Features.Bot
 		/// Атаковать бота
 		/// </summary>
 		/// <param name="bot"></param>
-		public void AttackBot(AbstractBot bot) => _botStateMachine.ChangeState(new AttackBehavior(_bot.GetComponent<AbstractBot>(),bot, _botData.Damage));
+		public void AttackBot(AbstractBot bot) => _botStateMachine.ChangeState(new AttackBehavior(_bot.GetComponent<AbstractBot>(), bot, _botData.Damage));
 
 		/// <summary>
 		/// Получить текущее количество здоровья у бота
 		/// </summary>
 		/// <returns></returns>
 		public int GetHealth() => _botData.Health;
+
 		/// <summary>
 		/// Уменьшить здоровье бота
 		/// </summary>
 		/// <param name="health"></param>
-		public void DecreaseHealth(int health) => _botData.Health -= health;
+		public void DecreaseHealth(int health)
+		{
+			_botData.Health -= health;
+		}
+
+		/// <summary>
+		/// Бот умер
+		/// </summary>
+		public void Die()
+		{
+			_botStateMachine.ChangeState(new IdleBehavior());
+			_botPool.ReturnToPool(_bot);
+		}
 	}
 }

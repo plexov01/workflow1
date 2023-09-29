@@ -10,17 +10,18 @@ namespace WorkFlow1.Features.Bot
 	public class BotData
 	{
 		/// <summary>
-		/// Уникальный идентификатор бота
-		/// </summary>
-		public string Id = default;
-
-		/// <summary>
 		/// Здоровье бота
 		/// </summary>
 		[Min(0)] public int Health = default;
 
+		[SerializeField] private int _id = default;
 		[SerializeField, Min(0)] private float _speed = default;
 		[SerializeField, Min(0)] private int _damage = default;
+
+		/// <summary>
+		/// Уникальный идентификатор бота
+		/// </summary>
+		public int Id => _id;
 
 		/// <summary>
 		/// Скорость передвижения бота
@@ -35,21 +36,23 @@ namespace WorkFlow1.Features.Bot
 		/// <summary>
 		/// Инициализация данных бота
 		/// </summary>
-		public void Initialize()
+		public void Initialize(int id)
 		{
+			_id = id;
+			
 			if (Health == 0)
 			{
-				Health = UnityEngine.Random.Range(3, 5);
+				Health = UnityEngine.Random.Range(3, 7);
 			}
 
 			if (_damage == 0)
 			{
 				_damage = UnityEngine.Random.Range(1, 2);
 			}
-			
+
 			if (_speed == 0)
 			{
-				_speed = UnityEngine.Random.Range(4, 5);
+				_speed = UnityEngine.Random.Range(3, 7);
 			}
 		}
 	}

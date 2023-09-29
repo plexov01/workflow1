@@ -18,9 +18,13 @@ namespace WorkFlow1.Features.Bot
 		private void Start()
 		{
 			_enemyGameObject = botController.StartChaseRandomBot();
-			_enemyBot = _enemyGameObject.GetComponent<AbstractBot>();
+			if (_enemyGameObject != null)
+			{
+				_enemyBot = _enemyGameObject.GetComponent<AbstractBot>();
 
-			_enemyGameObject.GetComponent<IKillable>().OnDied += DieEnemy;
+				_enemyGameObject.GetComponent<IKillable>().OnDied += DieEnemy;
+			}
+			
 		}
 
 		private void Update()
@@ -29,24 +33,26 @@ namespace WorkFlow1.Features.Bot
 			{
 				OnPositionChanged();
 			}
-			
+
 			//TODO: Осуществлять постоянный поиск цели, если текущей цели нет
 		}
 
 
 		public override void ApplyDamage(int damage)
 		{
+			botController.DecreaseHealth(damage);
 			int currentHealth = botController.GetHealth();
 
-			if (currentHealth - damage > 0)
+			if (currentHealth > 0)
 			{
-				botController.DecreaseHealth(damage);
 				OnDamaged();
 			}
 			else
 			{
+				_enemyGameObject.GetComponent<IKillable>().OnDied -= DieEnemy;
+				botController.Die();
 				OnDied(gameObject);
-				gameObject.SetActive(false);
+				
 			}
 		}
 
@@ -57,6 +63,15 @@ namespace WorkFlow1.Features.Bot
 			if (enemy == _enemyGameObject)
 			{
 				// TODO: Осуществить поиск новой цели
+				_enemyGameObject = botController.StartChaseRandomBot();
+				if (_enemyGameObject != null)
+				{
+					_enemyBot = _enemyGameObject.GetComponent<AbstractBot>();
+
+					_enemyGameObject.GetComponent<IKillable>().OnDied += DieEnemy;
+				}
+
+				Debug.Log(gameObject.name + " " + enemy.gameObject.name);
 				enemy.GetComponent<IKillable>().OnDied -= DieEnemy;
 			}
 		}
