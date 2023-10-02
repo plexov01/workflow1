@@ -10,9 +10,8 @@ namespace WorkFlow1.Features.Bot
 	/// </summary>
 	public class BotCreator : MonoBehaviour
 	{
-		[SerializeField, Range(0,12)] private int _botsCount = default;
+		[SerializeField, Range(0, 12)] private int _botsCount = default;
 		[SerializeField] private GameObject _capsuleBotPrefab = default;
-		[SerializeField] private GameObject _spawnPointsPool = default;
 
 		private List<Transform> _spawnsTransform = new List<Transform>();
 
@@ -34,23 +33,36 @@ namespace WorkFlow1.Features.Bot
 			for (int i = 0; i < _botsCount; i++)
 			{
 				Vector3 botPosition;
-				Quaternion botQuaternion;
+				Quaternion botRotation;
 
 				GameObject instanceGameObject;
 				if (i < _spawnsTransform.Count)
 				{
 					botPosition = _spawnsTransform[i].position;
-					botQuaternion = _spawnsTransform[i].rotation;
+					botRotation = _spawnsTransform[i].rotation;
 				}
 				else
 				{
 					botPosition = Vector3.zero;
-					botQuaternion = Quaternion.identity;
+					botRotation = Quaternion.identity;
 				}
 
-				instanceGameObject = _spawner.CreateEntity(_capsuleBotPrefab, botPosition, botQuaternion, _botPool.transform);
-				
-				_botPool.AddBot(instanceGameObject);
+				instanceGameObject = _botPool.GetNotActiveBot();
+
+				if (instanceGameObject == null)
+				{
+					instanceGameObject = _spawner.CreateEntity(_capsuleBotPrefab, botPosition, botRotation,
+						_botPool.transform);
+
+					_botPool.AddBot(instanceGameObject);
+				}
+				else
+				{
+					instanceGameObject.transform.position = botPosition;
+					instanceGameObject.transform.rotation = botRotation;
+					instanceGameObject.SetActive(true);
+					
+				}
 			}
 		}
 	}

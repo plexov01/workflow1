@@ -10,8 +10,7 @@ namespace WorkFlow1.Features.Bot
 		public int Id = default;
 
 		[SerializeField] protected BotController botController = default;
-
-
+		
 		protected virtual void Awake()
 		{
 			if (botController == null)
