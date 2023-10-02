@@ -10,8 +10,6 @@ namespace WorkFlow1.Features.Bot
 		private AbstractBot _enemy = default;
 		private int _damage = default;
 
-		private Coroutine _damageCoroutine = default;
-
 		public AttackBehavior(AbstractBot bot, AbstractBot enemyBot, int damage)
 		{
 			_bot = bot;

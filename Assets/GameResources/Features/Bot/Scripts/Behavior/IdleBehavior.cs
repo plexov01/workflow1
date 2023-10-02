@@ -1,6 +1,5 @@
 namespace WorkFlow1.Features.Bot
 {
-	using UnityEngine;
 	using System;
 
 	/// <summary>

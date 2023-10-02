@@ -30,7 +30,7 @@ namespace WorkFlow1.Features.Bot
 		public void Initialize()
 		{
 			_bot = gameObject;
-			
+
 			if (_navMeshAgent == null)
 			{
 				_navMeshAgent = _bot.GetComponent<NavMeshAgent>();
@@ -38,7 +38,7 @@ namespace WorkFlow1.Features.Bot
 
 			if (_botStateMachine == null)
 			{
-				_botStateMachine = GetComponent<BotStateMachine>();
+				_botStateMachine = _bot.GetComponent<BotStateMachine>();
 			}
 
 			_botStateMachine.Initialize(new IdleBehavior());
@@ -50,10 +50,9 @@ namespace WorkFlow1.Features.Bot
 
 			int newId = _botPool.GetNewBotId();
 			gameObject.name += newId;
-			
+
 			_botData.Initialize(newId);
-
-
+			
 			_navMeshAgent.speed = _botData.Speed;
 		}
 
@@ -67,15 +66,14 @@ namespace WorkFlow1.Features.Bot
 
 			//Удаление текущего бота из списка возможных целей
 			_listEnemies.Remove(_bot);
-			
-			if (_listEnemies.Count==0)
+
+			if (_listEnemies.Count == 0)
 			{
 				_botStateMachine.ChangeState(new IdleBehavior());
 				return null;
 			}
-			
+
 			GameObject attackedBot = _listEnemies[UnityEngine.Random.Range(0, _listEnemies.Count)].gameObject;
-			// _navMeshAgent.SetDestination(attackedBot.transform.position);
 
 			_botStateMachine.ChangeState(new MoveBehavior(_navMeshAgent, attackedBot));
 
@@ -86,7 +84,8 @@ namespace WorkFlow1.Features.Bot
 		/// Атаковать бота
 		/// </summary>
 		/// <param name="bot"></param>
-		public void AttackBot(AbstractBot bot) => _botStateMachine.ChangeState(new AttackBehavior(_bot.GetComponent<AbstractBot>(), bot, _botData.Damage));
+		public void AttackBot(AbstractBot bot) =>
+			_botStateMachine.ChangeState(new AttackBehavior(_bot.GetComponent<AbstractBot>(), bot, _botData.Damage));
 
 		/// <summary>
 		/// Получить текущее количество здоровья у бота
@@ -98,10 +97,7 @@ namespace WorkFlow1.Features.Bot
 		/// Уменьшить здоровье бота
 		/// </summary>
 		/// <param name="health"></param>
-		public void DecreaseHealth(int health)
-		{
-			_botData.Health -= health;
-		}
+		public void DecreaseHealth(int health) => _botData.Health -= health;
 
 		/// <summary>
 		/// Бот умер
@@ -111,5 +107,15 @@ namespace WorkFlow1.Features.Bot
 			_botStateMachine.ChangeState(new IdleBehavior());
 			_botPool.ReturnToPool(_bot);
 		}
+		/// <summary>
+		/// Ждать пока не появится враг
+		/// </summary>
+		public void WaitUntilEnemyAppear() =>
+			_botStateMachine.ChangeState(new WaitEnemyBehavior(_bot.GetComponent<AbstractBot>()));
+
+		/// <summary>
+		/// Вернуть данные бота к дефолтному состоянию
+		/// </summary>
+		public void ReturnDefaultBotData() => _botData.ResetToDefault();
 	}
 }

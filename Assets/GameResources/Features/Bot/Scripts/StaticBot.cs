@@ -1,8 +1,6 @@
 namespace WorkFlow1.Features.Bot
 {
-	using System.Collections;
-	using System.Collections.Generic;
-	using UnityEngine;
+
 	/// <summary>
 	/// Неподвижный бот
 	/// </summary>

@@ -3,18 +3,19 @@ namespace WorkFlow1.Features.BotPool
 	using System.Collections.Generic;
 	using UnityEngine;
 	using System.Linq;
-	using Bot;
+	using System;
 
 	/// <summary>
 	/// Пул объектов с ботами
 	/// </summary>
 	public class BotPool : MonoBehaviour
 	{
+		/// <summary>
+		/// Появился враг
+		/// </summary>
+		public event Action<GameObject> OnEnemyAppeared = delegate { };
+
 		[SerializeField] private List<GameObject> _bots = new List<GameObject>();
-
-		[SerializeField] private List<GameObject> _activeBots = new List<GameObject>();
-
-		[SerializeField] private List<GameObject> _notActiveBots = new List<GameObject>();
 
 		private int _counterId = default;
 
@@ -23,7 +24,7 @@ namespace WorkFlow1.Features.BotPool
 		/// </summary>
 		public List<GameObject> GetListActiveBots()
 		{
-			List<GameObject> activeBots = new List<GameObject>(from x in _bots where x.activeInHierarchy select x);
+			var activeBots = new List<GameObject>(from x in _bots where x.activeInHierarchy select x);
 
 			return activeBots;
 		}
@@ -37,6 +38,10 @@ namespace WorkFlow1.Features.BotPool
 			if (!_bots.Contains(bot))
 			{
 				_bots.Add(bot);
+				if (bot.activeInHierarchy)
+				{
+					OnEnemyAppeared(bot);
+				}
 			}
 		}
 
@@ -47,6 +52,17 @@ namespace WorkFlow1.Features.BotPool
 		public void ReturnToPool(GameObject bot)
 		{
 			bot.SetActive(false);
+		}
+
+		/// <summary>
+		/// Получение неактивного бота
+		/// </summary>
+		/// <returns></returns>
+		public GameObject GetNotActiveBot()
+		{
+			var bot = _bots.FirstOrDefault(x => !x.activeInHierarchy);
+
+			return bot;
 		}
 
 		/// <summary>

@@ -55,5 +55,12 @@ namespace WorkFlow1.Features.Bot
 				_speed = UnityEngine.Random.Range(3, 7);
 			}
 		}
+		/// <summary>
+		/// Вернуть характеристики бота в изначальное состояние
+		/// </summary>
+		public void ResetToDefault()
+		{
+			Health = UnityEngine.Random.Range(3, 7);
+		}
 	}
 }
