@@ -6,7 +6,7 @@ namespace WorkFlow1.Features.Bot
 	/// <summary>
 	/// Бот цилиндр
 	/// </summary>
-	public class CapsuleBot : AbstractBot, IMovable, IDamageable, IKillable, ISearchable
+	public class CapsuleBot : AbstractBot, IMovable, IKillable, ISearchable
 	{
 		/// <summary>
 		/// Позиция изменилась
@@ -14,16 +14,11 @@ namespace WorkFlow1.Features.Bot
 		public event Action OnPositionChanged = delegate { };
 
 		/// <summary>
-		/// Боту нанесён урон
-		/// </summary>
-		public event Action OnDamaged = delegate { };
-
-		/// <summary>
 		/// Бот умер
 		/// </summary>
-		public event Action<GameObject> OnDied = delegate { };
+		public event Action<GameObject, GameObject> OnDied = delegate { };
 
-		[SerializeField] private GameObject _enemyGameObject = default;
+		private GameObject _enemyGameObject = default;
 		private AbstractBot _enemyBot = default;
 
 		private void OnEnable()
@@ -42,39 +37,31 @@ namespace WorkFlow1.Features.Bot
 			}
 		}
 
-
-		public override void ApplyDamage(int damage)
+		public override void ApplyDamage(GameObject enemy, int damage)
 		{
 			botController.DecreaseHealth(damage);
 			int currentHealth = botController.GetHealth();
 
-			if (currentHealth > 0)
-			{
-				OnDamaged();
-			}
-			else
+			if (currentHealth <= 0)
 			{
 				_enemyGameObject.GetComponent<IKillable>().OnDied -= DieEnemy;
 				botController.Die();
-				OnDied(gameObject);
+				OnDied(enemy, gameObject);
 			}
 		}
 
-		private void DoDamage(AbstractBot bot)
-		{
-			botController.AttackBot(bot);
-		}
-
 		// Враг умер
-		private void DieEnemy(GameObject enemy)
+		private void DieEnemy(GameObject enemyKiller, GameObject enemy)
 		{
+			if (enemyKiller == gameObject)
+			{
+				botController.IncreaseScore();
+				botController.IncreaseDamage();
+			}
+
 			if (enemy == _enemyGameObject)
 			{
-				
-				// TODO: Осуществить поиск новой цели
 				FindEnemy(null);
-
-				Debug.Log(gameObject.name + " " + enemy.gameObject.name);
 				enemy.GetComponent<IKillable>().OnDied -= DieEnemy;
 			}
 		}
@@ -85,13 +72,12 @@ namespace WorkFlow1.Features.Bot
 		/// <param name="enemy"></param>
 		public void FindEnemy(GameObject enemy)
 		{
-			// Поиск среди активных или нахождение конкретного
+			// Поиск среди активных или нахождение конкретного бота для атаки
 			_enemyGameObject = enemy != null ? enemy : botController.StartChaseRandomBot();
 
 			if (_enemyGameObject != null)
 			{
 				_enemyBot = _enemyGameObject.GetComponent<AbstractBot>();
-
 				_enemyGameObject.GetComponent<IKillable>().OnDied += DieEnemy;
 			}
 			else
@@ -105,7 +91,7 @@ namespace WorkFlow1.Features.Bot
 			if (other.gameObject == _enemyGameObject)
 			{
 				_enemyBot = other.gameObject.GetComponent<AbstractBot>();
-				DoDamage(_enemyBot);
+				botController.AttackBot(_enemyBot);
 			}
 		}
 	}

@@ -7,6 +7,6 @@ namespace WorkFlow1.Features.Bot
 	/// </summary>
 	public interface IKillable
 	{
-		public event Action<GameObject> OnDied;
+		public event Action<GameObject,GameObject> OnDied;
 	}
 }

@@ -10,11 +10,10 @@ namespace WorkFlow1.Features.Bot
 	[Serializable]
 	public class MoveBehavior : AbstractBotBehavior
 	{
-		public string nameScipt = nameof(MoveBehavior);
 		[SerializeField] private GameObject _aim = default;
 
 		private NavMeshAgent _navMeshAgent = default;
-		
+
 		public MoveBehavior(NavMeshAgent navMeshAgent, GameObject attackedBot)
 		{
 			_navMeshAgent = navMeshAgent;
@@ -23,8 +22,6 @@ namespace WorkFlow1.Features.Bot
 
 		public override void EnterBehavior()
 		{
-			_navMeshAgent.SetDestination(_aim.transform.position);
-
 			if (_aim.TryGetComponent(out IMovable botMovable))
 			{
 				botMovable.OnPositionChanged += ChaseAim;
@@ -33,13 +30,18 @@ namespace WorkFlow1.Features.Bot
 
 		public override void ExitBehavior()
 		{
-
 			if (_aim.TryGetComponent(out IMovable botMovable))
 			{
 				botMovable.OnPositionChanged -= ChaseAim;
 			}
 		}
 
-		private void ChaseAim() => _navMeshAgent.SetDestination(_aim.transform.position);
+		private void ChaseAim()
+		{
+			if (_navMeshAgent.gameObject.activeInHierarchy)
+			{
+				_navMeshAgent.SetDestination(_aim.transform.position);
+			}
+		}
 	}
 }

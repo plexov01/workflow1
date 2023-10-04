@@ -51,7 +51,15 @@ namespace WorkFlow1.Features.BotPool
 		/// <param name="bot"></param>
 		public void ReturnToPool(GameObject bot)
 		{
-			bot.SetActive(false);
+			if (_bots.Contains(bot))
+			{
+				bot.SetActive(false);
+			}
+			else
+			{
+				Debug.Log("В пуле нет объекта" + bot.name);
+			}
+			
 		}
 
 		/// <summary>
