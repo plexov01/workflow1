@@ -11,7 +11,7 @@ namespace WorkFlow1.Features.Bot
 	public class BotCreator : MonoBehaviour
 	{
 		[SerializeField, Range(0, 12)] private int _botsCount = default;
-		[SerializeField] private GameObject _capsuleBotPrefab = default;
+		private GameObject _capsuleBotPrefab = default;
 
 		private List<Transform> _spawnsTransform = new List<Transform>();
 
@@ -21,10 +21,11 @@ namespace WorkFlow1.Features.Bot
 
 		private void Awake()
 		{
+			_capsuleBotPrefab = Resources.Load<GameObject>("Bot/Prefabs/Capsule");
+
 			_spawner = FindObjectOfType<Spawner>();
 			_botPool = FindObjectOfType<BotPool>();
 			_spawnsPool = FindObjectOfType<SpawnsPool>();
-
 			_spawnsTransform = _spawnsPool.GetSpawnTransforms();
 		}
 
@@ -35,7 +36,7 @@ namespace WorkFlow1.Features.Bot
 				Vector3 botPosition;
 				Quaternion botRotation;
 
-				GameObject instanceGameObject;
+				// GameObject instanceGameObject;
 				if (i < _spawnsTransform.Count)
 				{
 					botPosition = _spawnsTransform[i].position;
@@ -47,22 +48,28 @@ namespace WorkFlow1.Features.Bot
 					botRotation = Quaternion.identity;
 				}
 
-				instanceGameObject = _botPool.GetNotActiveBot();
+				CreateBot(botPosition, botRotation);
+			}
+		}
 
-				if (instanceGameObject == null)
-				{
-					instanceGameObject = _spawner.CreateEntity(_capsuleBotPrefab, botPosition, botRotation,
-						_botPool.transform);
-
-					_botPool.AddBot(instanceGameObject);
-				}
-				else
-				{
-					instanceGameObject.transform.position = botPosition;
-					instanceGameObject.transform.rotation = botRotation;
-					instanceGameObject.SetActive(true);
-					
-				}
+		/// <summary>
+		/// Создание бота в определённых координатах
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="rotation"></param>
+		public void CreateBot(Vector3 position, Quaternion rotation)
+		{
+			GameObject bot = _botPool.GetBot();
+			if (bot == null)
+			{
+				bot = _spawner.CreateEntity(_capsuleBotPrefab, position, rotation,
+					_botPool.transform);
+				_botPool.AddBot(bot);
+			}
+			else
+			{
+				bot.transform.position = position;
+				bot.transform.rotation = rotation;
 			}
 		}
 	}

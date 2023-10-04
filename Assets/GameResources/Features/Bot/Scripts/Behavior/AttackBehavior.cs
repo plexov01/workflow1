@@ -23,7 +23,9 @@ namespace WorkFlow1.Features.Bot
 			{
 				_enemy.ApplyDamage(_bot.gameObject, _damage);
 				yield return null;
+				// yield return new WaitForSeconds(0.01f);
 			}
+			
 		}
 
 		public override void EnterBehavior()

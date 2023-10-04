@@ -79,7 +79,7 @@ namespace WorkFlow1.Features.Bot
 
 			if (listEnemies.Count == 0)
 			{
-				_botStateMachine.ChangeState(new IdleBehavior());
+				_botStateMachine.ChangeState(new WaitEnemyBehavior(_bot.GetComponent<AbstractBot>()));
 				return null;
 			}
 
@@ -128,7 +128,10 @@ namespace WorkFlow1.Features.Bot
 		/// <summary>
 		/// Увеличить урон бота
 		/// </summary>
-		public void IncreaseDamage() => _botData.Damage++;
+		public void IncreaseDamage()
+		{
+			_botData.Damage++;
+		}
 
 		/// <summary>
 		/// Бот умер
@@ -142,12 +145,20 @@ namespace WorkFlow1.Features.Bot
 		/// <summary>
 		/// Ждать пока не появится враг
 		/// </summary>
-		public void WaitUntilEnemyAppear() =>
+		public void WaitUntilEnemyAppear()
+		{
 			_botStateMachine.ChangeState(new WaitEnemyBehavior(_bot.GetComponent<AbstractBot>()));
+		}
 
 		/// <summary>
 		/// Вернуть данные бота к дефолтному состоянию
 		/// </summary>
-		public void ReturnDefaultBotData() => _botData.ResetToDefault();
+		public void ReturnDefaultBotData()
+		{
+			_botData.ResetToDefault();
+			_uiBotViewController.CurrentHealthPercentage = _botData.CurrentHealth / _botData.MaxHealth;
+			_uiBotViewController.CurrentScore = _botData.Score;
+			_uiBotViewController.UpdateUI();
+		}
 	}
 }
