@@ -2,6 +2,7 @@ namespace WorkFlow1.Features.Bot
 {
 	using UnityEngine;
 	using System;
+	using BotPool;
 
 	/// <summary>
 	/// Бот цилиндр
@@ -20,14 +21,19 @@ namespace WorkFlow1.Features.Bot
 
 		private GameObject _enemyGameObject = default;
 		private AbstractBot _enemyBot = default;
+		private BotPool _botPool = default;
+
+		protected override void Awake()
+		{
+			base.Awake();
+			_botPool = FindObjectOfType<BotPool>();
+		}
 
 		private void OnEnable()
 		{
 			botController.ReturnDefaultBotData();
-			FindEnemy(null);
+			FindEnemy();
 		}
-
-		private void Start() => FindEnemy(null);
 
 		private void Update()
 		{
@@ -53,16 +59,17 @@ namespace WorkFlow1.Features.Bot
 		// Враг умер
 		private void DieEnemy(GameObject enemyKiller, GameObject enemy)
 		{
+			enemy.GetComponent<IKillable>().OnDied -= DieEnemy;
+
+			if (enemy == _enemyGameObject)
+			{
+				FindEnemy();
+			}
+
 			if (enemyKiller == gameObject)
 			{
 				botController.IncreaseScore();
 				botController.IncreaseDamage();
-			}
-
-			if (enemy == _enemyGameObject)
-			{
-				FindEnemy(null);
-				enemy.GetComponent<IKillable>().OnDied -= DieEnemy;
 			}
 		}
 
@@ -70,19 +77,15 @@ namespace WorkFlow1.Features.Bot
 		/// Найти врага
 		/// </summary>
 		/// <param name="enemy"></param>
-		public void FindEnemy(GameObject enemy)
+		public void FindEnemy()
 		{
-			// Поиск среди активных или нахождение конкретного бота для атаки
-			_enemyGameObject = enemy != null ? enemy : botController.StartChaseRandomBot();
+			// Поиск бота для атаки
+			_enemyGameObject = botController.StartChaseRandomBot();
 
 			if (_enemyGameObject != null)
 			{
 				_enemyBot = _enemyGameObject.GetComponent<AbstractBot>();
 				_enemyGameObject.GetComponent<IKillable>().OnDied += DieEnemy;
-			}
-			else
-			{
-				botController.WaitUntilEnemyAppear();
 			}
 		}
 

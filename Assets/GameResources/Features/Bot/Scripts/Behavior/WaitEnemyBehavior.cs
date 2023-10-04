@@ -22,9 +22,9 @@ namespace WorkFlow1.Features.Bot
 		/// Сделать после появления врага
 		/// </summary>
 		/// <param name="bot"></param>
-		public void DoAftherAppearEnemy(GameObject bot)
+		public void DoAftherAppearEnemy()
 		{
-			_bot.GetComponent<ISearchable>().FindEnemy(bot);
+			_bot.GetComponent<ISearchable>().FindEnemy();
 		}
 	}
 }

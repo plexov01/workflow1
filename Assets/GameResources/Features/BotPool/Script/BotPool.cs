@@ -13,7 +13,7 @@ namespace WorkFlow1.Features.BotPool
 		/// <summary>
 		/// Появился враг
 		/// </summary>
-		public event Action<GameObject> OnEnemyAppeared = delegate { };
+		public event Action OnEnemyAppeared = delegate { };
 
 		[SerializeField] private List<GameObject> _bots = new List<GameObject>();
 
@@ -40,7 +40,7 @@ namespace WorkFlow1.Features.BotPool
 				_bots.Add(bot);
 				if (bot.activeInHierarchy)
 				{
-					OnEnemyAppeared(bot);
+					OnEnemyAppeared();
 				}
 			}
 		}
@@ -59,16 +59,20 @@ namespace WorkFlow1.Features.BotPool
 			{
 				Debug.Log("В пуле нет объекта" + bot.name);
 			}
-			
 		}
 
 		/// <summary>
 		/// Получение неактивного бота
 		/// </summary>
 		/// <returns></returns>
-		public GameObject GetNotActiveBot()
+		public GameObject GetBot()
 		{
 			var bot = _bots.FirstOrDefault(x => !x.activeInHierarchy);
+			if (bot != null)
+			{
+				bot.SetActive(true);
+				OnEnemyAppeared();
+			}
 
 			return bot;
 		}

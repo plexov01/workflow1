@@ -1133,6 +1133,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1206,6 +1207,19 @@ Transform:
   m_Father: {fileID: 1908491711}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 76.8, y: 90, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99c1fd6492c85d489004d930b8b948a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Camera: {fileID: 0}
 --- !u!1 &978577774
 GameObject:
   m_ObjectHideFlags: 0
@@ -2672,7 +2686,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _botsCount: 12
-  _capsuleBotPrefab: {fileID: 7502115442071222085, guid: b28e31c7dad28154f9319db8737081fc, type: 3}
 --- !u!1 &1872228005
 GameObject:
   m_ObjectHideFlags: 0
@@ -2845,6 +2858,7 @@ GameObject:
   - component: {fileID: 1982875128}
   - component: {fileID: 1982875127}
   - component: {fileID: 1982875126}
+  - component: {fileID: 1982875129}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -2931,6 +2945,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1982875124}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1982875129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1982875124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f10d9c6f7cb7d54ab4591d83b320d49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2049759014
 GameObject:
   m_ObjectHideFlags: 0
