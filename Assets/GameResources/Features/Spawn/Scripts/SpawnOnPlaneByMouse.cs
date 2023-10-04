@@ -29,7 +29,7 @@ namespace WorkFlow1.Features.Spawner
 
 			if (Physics.Raycast(ray, out hit))
 			{
-				_botCreator.CreateBot(hit.point, Quaternion.identity);
+				_botCreator.CreateBot(hit.point+Vector3.up, Quaternion.identity);
 			}
 		}
 	}
