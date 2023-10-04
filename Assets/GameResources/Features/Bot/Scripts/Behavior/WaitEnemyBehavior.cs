@@ -2,7 +2,9 @@ namespace WorkFlow1.Features.Bot
 {
 	using UnityEngine;
 	using BotPool;
-
+	/// <summary>
+	/// Поведения ожидания врага
+	/// </summary>
 	public class WaitEnemyBehavior : AbstractBotBehavior
 	{
 		private AbstractBot _bot = default;
