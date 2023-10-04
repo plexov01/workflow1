@@ -7,10 +7,8 @@ namespace WorkFlow1.Features.Bot
 	/// </summary>
 	public abstract class AbstractBot : MonoBehaviour
 	{
-		public int Id = default;
-
 		[SerializeField] protected BotController botController = default;
-		
+
 		protected virtual void Awake()
 		{
 			if (botController == null)
@@ -22,8 +20,8 @@ namespace WorkFlow1.Features.Bot
 		}
 
 		/// <summary>
-		/// Применение урона к текущему бота
+		/// Применение урона к текущему боту
 		/// </summary>
-		public abstract void ApplyDamage(int damage);
+		public abstract void ApplyDamage(GameObject enemy, int damage);
 	}
 }

@@ -8,7 +8,6 @@ namespace WorkFlow1.Features.Bot
 	[Serializable]
 	public class IdleBehavior : AbstractBotBehavior
 	{
-		public string nameScipt = nameof(IdleBehavior);
 		public override void EnterBehavior()
 		{
 			//TODO: Реализовать действия при входе в поведение

@@ -5,10 +5,10 @@ namespace WorkFlow1.Features.Bot
 
 	public class AttackBehavior : AbstractBotBehavior
 	{
-		public string nameScipt = nameof(AttackBehavior);
 		private AbstractBot _bot = default;
 		private AbstractBot _enemy = default;
 		private int _damage = default;
+		private Coroutine _damageCoroutine = default;
 
 		public AttackBehavior(AbstractBot bot, AbstractBot enemyBot, int damage)
 		{
@@ -21,7 +21,7 @@ namespace WorkFlow1.Features.Bot
 		{
 			while (_enemy.isActiveAndEnabled && _bot.isActiveAndEnabled)
 			{
-				_enemy.ApplyDamage(_damage);
+				_enemy.ApplyDamage(_bot.gameObject, _damage);
 				yield return null;
 			}
 		}
@@ -30,13 +30,16 @@ namespace WorkFlow1.Features.Bot
 		{
 			if (_bot.isActiveAndEnabled)
 			{
-				_bot.StartCoroutine(DamageEnemy());
+				_damageCoroutine = _bot.StartCoroutine(DamageEnemy());
 			}
-				
 		}
 
 		public override void ExitBehavior()
 		{
+			if (_damageCoroutine != null)
+			{
+				_bot.StopCoroutine(_damageCoroutine);
+			}
 		}
 	}
 }

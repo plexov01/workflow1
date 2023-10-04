@@ -1,3 +1,5 @@
+using UnityEngine.Serialization;
+
 namespace WorkFlow1.Features.Bot
 {
 	using System;
@@ -10,13 +12,23 @@ namespace WorkFlow1.Features.Bot
 	public class BotData
 	{
 		/// <summary>
-		/// Здоровье бота
+		/// Текущее здоровье бота
 		/// </summary>
-		[Min(0)] public int Health = default;
+		[Min(0)] public int CurrentHealth = default;
 
-		[SerializeField] private int _id = default;
-		[SerializeField, Min(0)] private float _speed = default;
-		[SerializeField, Min(0)] private int _damage = default;
+		/// <summary>
+		/// Счёт уничтоженных целей
+		/// </summary>
+		[Min(0)] public int Score = default;
+
+		/// <summary>
+		/// Урон бота
+		/// </summary>
+		[Min(0)] public int Damage = default;
+
+		private int _id = default;
+		[Min(0)] private float _speed = default;
+		[Min(0)] private int _maxHealth = default;
 
 		/// <summary>
 		/// Уникальный идентификатор бота
@@ -29,9 +41,9 @@ namespace WorkFlow1.Features.Bot
 		public float Speed => _speed;
 
 		/// <summary>
-		/// Урон бота
+		/// Максимальное здоровье бота
 		/// </summary>
-		public int Damage => _damage;
+		public int MaxHealth => _maxHealth;
 
 		/// <summary>
 		/// Инициализация данных бота
@@ -39,15 +51,18 @@ namespace WorkFlow1.Features.Bot
 		public void Initialize(int id)
 		{
 			_id = id;
-			
-			if (Health == 0)
+
+			if (_maxHealth == 0)
 			{
-				Health = UnityEngine.Random.Range(3, 7);
+				_maxHealth = UnityEngine.Random.Range(3, 20);
+				CurrentHealth = _maxHealth;
 			}
 
-			if (_damage == 0)
+			Score = 0;
+
+			if (Damage == 0)
 			{
-				_damage = UnityEngine.Random.Range(1, 2);
+				Damage = UnityEngine.Random.Range(1, 2);
 			}
 
 			if (_speed == 0)
@@ -55,12 +70,15 @@ namespace WorkFlow1.Features.Bot
 				_speed = UnityEngine.Random.Range(3, 7);
 			}
 		}
+
 		/// <summary>
 		/// Вернуть характеристики бота в изначальное состояние
 		/// </summary>
 		public void ResetToDefault()
 		{
-			Health = UnityEngine.Random.Range(3, 7);
+			CurrentHealth = _maxHealth;
+			Score = 0;
+			Damage = UnityEngine.Random.Range(1, 2);;
 		}
 	}
 }

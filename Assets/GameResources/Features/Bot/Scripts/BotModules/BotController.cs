@@ -5,6 +5,7 @@ namespace WorkFlow1.Features.Bot
 	using UnityEngine.AI;
 	using System.Collections.Generic;
 	using BotPool;
+	using UIControllers;
 
 	/// <summary>
 	/// Контроллер бота
@@ -12,17 +13,17 @@ namespace WorkFlow1.Features.Bot
 	[Serializable]
 	public class BotController : MonoBehaviour
 	{
-		[SerializeField] private GameObject _bot = default;
-
 		[SerializeField] private BotData _botData = new BotData();
 
-		[SerializeField] private NavMeshAgent _navMeshAgent = default;
+		private GameObject _bot = default;
 
-		[SerializeReference] private BotStateMachine _botStateMachine = default;
+		private NavMeshAgent _navMeshAgent = default;
 
-		[SerializeField] private BotPool _botPool = default;
+		private BotStateMachine _botStateMachine = default;
 
-		[SerializeField] private List<GameObject> _listEnemies = new List<GameObject>();
+		private BotPool _botPool = default;
+
+		private UIBotViewController _uiBotViewController = default;
 
 		/// <summary>
 		/// Инициализация контроллера
@@ -48,12 +49,21 @@ namespace WorkFlow1.Features.Bot
 				_botPool = FindObjectOfType<BotPool>();
 			}
 
+			if (_uiBotViewController == null)
+			{
+				_uiBotViewController = _bot.transform.GetComponentInChildren<UIBotViewController>();
+			}
+
 			int newId = _botPool.GetNewBotId();
-			gameObject.name += newId;
+			_bot.name += newId;
 
 			_botData.Initialize(newId);
-			
+
 			_navMeshAgent.speed = _botData.Speed;
+
+			_uiBotViewController.CurrentHealthPercentage = _botData.CurrentHealth / _botData.MaxHealth;
+			_uiBotViewController.CurrentScore = _botData.Score;
+			_uiBotViewController.UpdateUI();
 		}
 
 		/// <summary>
@@ -62,18 +72,19 @@ namespace WorkFlow1.Features.Bot
 		/// <returns></returns>
 		public GameObject StartChaseRandomBot()
 		{
-			_listEnemies = new List<GameObject>(_botPool.GetListActiveBots());
+			var listEnemies = new List<GameObject>(_botPool.GetListActiveBots());
 
 			//Удаление текущего бота из списка возможных целей
-			_listEnemies.Remove(_bot);
+			listEnemies.Remove(_bot);
 
-			if (_listEnemies.Count == 0)
+			if (listEnemies.Count == 0)
 			{
 				_botStateMachine.ChangeState(new IdleBehavior());
 				return null;
 			}
 
-			GameObject attackedBot = _listEnemies[UnityEngine.Random.Range(0, _listEnemies.Count)].gameObject;
+			//Получение рандомного бота из списка активных
+			GameObject attackedBot = listEnemies[UnityEngine.Random.Range(0, listEnemies.Count)].gameObject;
 
 			_botStateMachine.ChangeState(new MoveBehavior(_navMeshAgent, attackedBot));
 
@@ -91,13 +102,33 @@ namespace WorkFlow1.Features.Bot
 		/// Получить текущее количество здоровья у бота
 		/// </summary>
 		/// <returns></returns>
-		public int GetHealth() => _botData.Health;
+		public int GetHealth() => _botData.CurrentHealth;
 
 		/// <summary>
 		/// Уменьшить здоровье бота
 		/// </summary>
 		/// <param name="health"></param>
-		public void DecreaseHealth(int health) => _botData.Health -= health;
+		public void DecreaseHealth(int health)
+		{
+			_botData.CurrentHealth -= health;
+			_uiBotViewController.CurrentHealthPercentage = (float)_botData.CurrentHealth / (float)_botData.MaxHealth;
+			_uiBotViewController.UpdateUI();
+		}
+
+		/// <summary>
+		/// Увеличить счёт убитых фрагов
+		/// </summary>
+		public void IncreaseScore()
+		{
+			_botData.Score++;
+			_uiBotViewController.CurrentScore = _botData.Score;
+			_uiBotViewController.UpdateUI();
+		}
+
+		/// <summary>
+		/// Увеличить урон бота
+		/// </summary>
+		public void IncreaseDamage() => _botData.Damage++;
 
 		/// <summary>
 		/// Бот умер
@@ -107,6 +138,7 @@ namespace WorkFlow1.Features.Bot
 			_botStateMachine.ChangeState(new IdleBehavior());
 			_botPool.ReturnToPool(_bot);
 		}
+
 		/// <summary>
 		/// Ждать пока не появится враг
 		/// </summary>
