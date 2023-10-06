@@ -3,6 +3,9 @@ namespace WorkFlow1.Features.Bot
 	using System.Collections;
 	using UnityEngine;
 
+	/// <summary>
+	/// Реализация поведения атаки бота
+	/// </summary>
 	public class AttackBehavior : AbstractBotBehavior
 	{
 		private AbstractBot _bot = default;
@@ -21,11 +24,9 @@ namespace WorkFlow1.Features.Bot
 		{
 			while (_enemy.isActiveAndEnabled && _bot.isActiveAndEnabled)
 			{
-				_enemy.ApplyDamage(_bot.gameObject, _damage);
+				_enemy.ApplyDamage(_bot, _damage);
 				yield return null;
-				// yield return new WaitForSeconds(0.01f);
 			}
-			
 		}
 
 		public override void EnterBehavior()

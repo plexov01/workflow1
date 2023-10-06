@@ -2,7 +2,6 @@ namespace WorkFlow1.Features.Bot
 {
 	using UnityEngine;
 	using System;
-	using BotPool;
 
 	/// <summary>
 	/// Бот цилиндр
@@ -21,13 +20,6 @@ namespace WorkFlow1.Features.Bot
 
 		private GameObject _enemyGameObject = default;
 		private AbstractBot _enemyBot = default;
-		private BotPool _botPool = default;
-
-		protected override void Awake()
-		{
-			base.Awake();
-			_botPool = FindObjectOfType<BotPool>();
-		}
 
 		private void OnEnable()
 		{
@@ -43,7 +35,7 @@ namespace WorkFlow1.Features.Bot
 			}
 		}
 
-		public override void ApplyDamage(GameObject enemy, int damage)
+		public override void ApplyDamage(AbstractBot enemy, int damage)
 		{
 			botController.DecreaseHealth(damage);
 			int currentHealth = botController.GetHealth();
@@ -52,7 +44,7 @@ namespace WorkFlow1.Features.Bot
 			{
 				_enemyGameObject.GetComponent<IKillable>().OnDied -= DieEnemy;
 				botController.Die();
-				OnDied(enemy, gameObject);
+				OnDied(enemy.gameObject, gameObject);
 			}
 		}
 
