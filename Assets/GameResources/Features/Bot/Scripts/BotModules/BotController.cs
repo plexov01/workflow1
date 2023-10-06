@@ -31,27 +31,37 @@ namespace WorkFlow1.Features.Bot
 		public void Initialize()
 		{
 			_bot = gameObject;
+			
+			_navMeshAgent = _bot.GetComponent<NavMeshAgent>();
+			
+			_botStateMachine = _bot.GetComponent<BotStateMachine>();
+			
+			_botPool = FindObjectOfType<BotPool>();
+			
+			_uiBotViewController = _bot.transform.GetComponentInChildren<UIBotViewController>();
+			
+			
 
 			if (_navMeshAgent == null)
 			{
-				_navMeshAgent = _bot.GetComponent<NavMeshAgent>();
+				_navMeshAgent = _bot.AddComponent<NavMeshAgent>();
 			}
 
 			if (_botStateMachine == null)
 			{
-				_botStateMachine = _bot.GetComponent<BotStateMachine>();
+				_botStateMachine = _bot.AddComponent<BotStateMachine>();
 			}
 
 			_botStateMachine.Initialize(new IdleBehavior());
 
 			if (_botPool == null)
 			{
-				_botPool = FindObjectOfType<BotPool>();
+				Debug.Log("BotPool нет на сцене");
 			}
 
 			if (_uiBotViewController == null)
 			{
-				_uiBotViewController = _bot.transform.GetComponentInChildren<UIBotViewController>();
+				Debug.Log("На объекте нет UiBotViewController");
 			}
 
 			int newId = _botPool.GetNewBotId();
@@ -60,7 +70,11 @@ namespace WorkFlow1.Features.Bot
 			_botData.Initialize(newId);
 
 			_navMeshAgent.speed = _botData.Speed;
+			UpdateCurrentBotUi();
+		}
 
+		private void UpdateCurrentBotUi()
+		{
 			_uiBotViewController.CurrentHealthPercentage = _botData.CurrentHealth / _botData.MaxHealth;
 			_uiBotViewController.CurrentScore = _botData.Score;
 			_uiBotViewController.UpdateUI();
@@ -111,8 +125,7 @@ namespace WorkFlow1.Features.Bot
 		public void DecreaseHealth(int health)
 		{
 			_botData.CurrentHealth -= health;
-			_uiBotViewController.CurrentHealthPercentage = (float)_botData.CurrentHealth / (float)_botData.MaxHealth;
-			_uiBotViewController.UpdateUI();
+			UpdateCurrentBotUi();
 		}
 
 		/// <summary>
@@ -121,8 +134,7 @@ namespace WorkFlow1.Features.Bot
 		public void IncreaseScore()
 		{
 			_botData.Score++;
-			_uiBotViewController.CurrentScore = _botData.Score;
-			_uiBotViewController.UpdateUI();
+			UpdateCurrentBotUi();
 		}
 
 		/// <summary>
@@ -156,9 +168,7 @@ namespace WorkFlow1.Features.Bot
 		public void ReturnDefaultBotData()
 		{
 			_botData.ResetToDefault();
-			_uiBotViewController.CurrentHealthPercentage = _botData.CurrentHealth / _botData.MaxHealth;
-			_uiBotViewController.CurrentScore = _botData.Score;
-			_uiBotViewController.UpdateUI();
+			UpdateCurrentBotUi();
 		}
 	}
 }

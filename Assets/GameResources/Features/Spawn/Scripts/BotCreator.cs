@@ -26,6 +26,7 @@ namespace WorkFlow1.Features.Bot
 			_spawner = FindObjectOfType<Spawner>();
 			_botPool = FindObjectOfType<BotPool>();
 			_spawnsPool = FindObjectOfType<SpawnsPool>();
+			
 			_spawnsTransform = _spawnsPool.GetSpawnTransforms();
 		}
 

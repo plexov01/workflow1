@@ -5,7 +5,7 @@ namespace WorkFlow1.Features.Bot
 	using UnityEngine.AI;
 
 	/// <summary>
-	/// Реализация поведения атаки бота
+	/// Реализация поведения движения к определённой точке
 	/// </summary>
 	[Serializable]
 	public class MoveBehavior : AbstractBotBehavior

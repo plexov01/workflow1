@@ -22,6 +22,6 @@ namespace WorkFlow1.Features.Bot
 		/// <summary>
 		/// Применение урона к текущему боту
 		/// </summary>
-		public abstract void ApplyDamage(GameObject enemy, int damage);
+		public abstract void ApplyDamage(AbstractBot enemy, int damage);
 	}
 }
