@@ -2,6 +2,7 @@ namespace WorkFlow1.Features.Bot
 {
 	using UnityEngine;
 	using System;
+	using System.Collections.Generic;
 
 	/// <summary>
 	/// Бот цилиндр
@@ -20,6 +21,7 @@ namespace WorkFlow1.Features.Bot
 
 		private GameObject _enemyGameObject = default;
 		private AbstractBot _enemyBot = default;
+
 
 		private void OnEnable()
 		{
@@ -43,7 +45,8 @@ namespace WorkFlow1.Features.Bot
 			if (currentHealth <= 0)
 			{
 				_enemyGameObject.GetComponent<IKillable>().OnDied -= DieEnemy;
-				botController.Die();
+				Die();
+				botController.GetIdleState();
 				OnDied(enemy.gameObject, gameObject);
 			}
 		}
@@ -72,7 +75,7 @@ namespace WorkFlow1.Features.Bot
 		public void FindEnemy()
 		{
 			// Поиск бота для атаки
-			_enemyGameObject = botController.StartChaseRandomBot();
+			StartChaseRandomBot();
 
 			if (_enemyGameObject != null)
 			{
@@ -88,6 +91,27 @@ namespace WorkFlow1.Features.Bot
 				_enemyBot = other.gameObject.GetComponent<AbstractBot>();
 				botController.AttackBot(_enemyBot);
 			}
+		}
+
+		private void Die() => botPool.ReturnToPool(gameObject);
+
+		private void StartChaseRandomBot()
+		{
+			var listEnemies = new List<GameObject>(botPool.GetListActiveBots());
+
+			//Удаление текущего бота из списка возможных целей
+			listEnemies.Remove(gameObject);
+
+			if (listEnemies.Count == 0)
+			{
+				botController.WaitUntilEnemyAppear();
+				return;
+			}
+
+			//Получение рандомного бота из списка активных
+			_enemyGameObject = listEnemies[UnityEngine.Random.Range(0, listEnemies.Count)].gameObject;
+
+			botController.Chase(_enemyGameObject);
 		}
 	}
 }
