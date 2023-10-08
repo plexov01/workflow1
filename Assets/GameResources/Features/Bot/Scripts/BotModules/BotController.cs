@@ -21,26 +21,22 @@ namespace WorkFlow1.Features.Bot
 
 		private BotStateMachine _botStateMachine = default;
 
-		private BotPool _botPool = default;
-
 		private UIBotViewController _uiBotViewController = default;
 
 		/// <summary>
 		/// Инициализация контроллера
 		/// </summary>
-		public void Initialize()
+		public void Initialize(int id)
 		{
 			_bot = gameObject;
-			
+
 			_navMeshAgent = _bot.GetComponent<NavMeshAgent>();
-			
+
 			_botStateMachine = _bot.GetComponent<BotStateMachine>();
-			
-			_botPool = FindObjectOfType<BotPool>();
-			
+
+
 			_uiBotViewController = _bot.transform.GetComponentInChildren<UIBotViewController>();
-			
-			
+
 
 			if (_navMeshAgent == null)
 			{
@@ -54,20 +50,16 @@ namespace WorkFlow1.Features.Bot
 
 			_botStateMachine.Initialize(new IdleBehavior());
 
-			if (_botPool == null)
-			{
-				Debug.Log("BotPool нет на сцене");
-			}
 
 			if (_uiBotViewController == null)
 			{
 				Debug.Log("На объекте нет UiBotViewController");
 			}
 
-			int newId = _botPool.GetNewBotId();
-			_bot.name += newId;
 
-			_botData.Initialize(newId);
+			_bot.name += id;
+
+			_botData.Initialize(id);
 
 			_navMeshAgent.speed = _botData.Speed;
 			UpdateCurrentBotUi();
@@ -75,35 +67,16 @@ namespace WorkFlow1.Features.Bot
 
 		private void UpdateCurrentBotUi()
 		{
-			_uiBotViewController.CurrentHealthPercentage = _botData.CurrentHealth / _botData.MaxHealth;
+			_uiBotViewController.CurrentHealthPercentage = (float)_botData.CurrentHealth / _botData.MaxHealth;
 			_uiBotViewController.CurrentScore = _botData.Score;
 			_uiBotViewController.UpdateUI();
 		}
 
 		/// <summary>
-		/// Начать атаку на случайного бота
+		/// Начать преследовать цель
 		/// </summary>
 		/// <returns></returns>
-		public GameObject StartChaseRandomBot()
-		{
-			var listEnemies = new List<GameObject>(_botPool.GetListActiveBots());
-
-			//Удаление текущего бота из списка возможных целей
-			listEnemies.Remove(_bot);
-
-			if (listEnemies.Count == 0)
-			{
-				_botStateMachine.ChangeState(new WaitEnemyBehavior(_bot.GetComponent<AbstractBot>()));
-				return null;
-			}
-
-			//Получение рандомного бота из списка активных
-			GameObject attackedBot = listEnemies[UnityEngine.Random.Range(0, listEnemies.Count)].gameObject;
-
-			_botStateMachine.ChangeState(new MoveBehavior(_navMeshAgent, attackedBot));
-
-			return attackedBot;
-		}
+		public void Chase(GameObject aim) => _botStateMachine.ChangeState(new MoveBehavior(_navMeshAgent, aim));
 
 		/// <summary>
 		/// Атаковать бота
@@ -140,27 +113,18 @@ namespace WorkFlow1.Features.Bot
 		/// <summary>
 		/// Увеличить урон бота
 		/// </summary>
-		public void IncreaseDamage()
-		{
-			_botData.Damage++;
-		}
+		public void IncreaseDamage() => _botData.Damage++;
 
 		/// <summary>
-		/// Бот умер
+		/// Переход в состояние ожидания
 		/// </summary>
-		public void Die()
-		{
-			_botStateMachine.ChangeState(new IdleBehavior());
-			_botPool.ReturnToPool(_bot);
-		}
+		public void GetIdleState() => _botStateMachine.ChangeState(new IdleBehavior());
 
 		/// <summary>
 		/// Ждать пока не появится враг
 		/// </summary>
-		public void WaitUntilEnemyAppear()
-		{
+		public void WaitUntilEnemyAppear() =>
 			_botStateMachine.ChangeState(new WaitEnemyBehavior(_bot.GetComponent<AbstractBot>()));
-		}
 
 		/// <summary>
 		/// Вернуть данные бота к дефолтному состоянию
