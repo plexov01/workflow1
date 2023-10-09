@@ -3,8 +3,6 @@ namespace WorkFlow1.Features.Bot
 	using UnityEngine;
 	using System;
 	using UnityEngine.AI;
-	using System.Collections.Generic;
-	using BotPool;
 	using UIControllers;
 
 	/// <summary>

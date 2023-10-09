@@ -1,5 +1,3 @@
-using UnityEngine.Serialization;
-
 namespace WorkFlow1.Features.Bot
 {
 	using System;
